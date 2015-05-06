@@ -12,7 +12,7 @@ class TriHadronLocalAnalyzer
 {
   public:
     TriHadronLocalAnalyzer();
-    //TriHadronLocalAnalyzer(std::string fileName);
+    TriHadronLocalAnalyzer(std::string fileName);
     void Analyze();
     void Canvas();
     void Canvas1();
