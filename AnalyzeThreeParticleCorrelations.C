@@ -90,5 +90,10 @@ void AnalyzeThreeParticleCorrelations()
     TH1D *hDeltaPhiProj = (TH1D*) hDifference->ProjectionY("hDeltaPhiProj",0,96,"e");
     hDeltaPhiProj->Draw();
     
+    tt.Canvas4();
+    tt.Efficiency();
+    
+    hdNdEta_default->Draw();
+    
     
 }
