@@ -20,23 +20,12 @@ class TriHadronLocalAnalyzer
     void Canvas2();
     void Canvas3();
     void Canvas4();
+    void Canvas5();
     virtual ~TriHadronLocalAnalyzer();
-    
-    TH1F *hdNdEta_default;
 
   private:
     TFile *fRead;
 
-    const int iBin = 7;
-    const float binWidth = 0.06;
-    
-    double nEvents_, nEvents1_;
-    
-    TString _baseHistoName;
-    TString _baseEventHisto;
-    
-    TH1F *hUnSymmtrized;
-    TH1F *hEvents;
     
 };
 
@@ -55,27 +44,7 @@ TriHadronLocalAnalyzer::TriHadronLocalAnalyzer()
 
 TriHadronLocalAnalyzer::~TriHadronLocalAnalyzer()
 {
-    delete fRead;
-}
-
-TH1F *
-TriHadronLocalAnalyzer::Efficiency()
-{
-    TH1::SetDefaultSumw2();
-    
-    _baseHistoName = "TriHadronAnalysisMult190/hdNdEta_VzBin_7";
-    hdNdEta_default  = (TH1F*)fRead->Get(_baseHistoName);
-    hUnSymmtrized = (TH1F *)hdNdEta_default->Clone();
-    
-    _baseEventHisto = "TriHadronAnalysisMult190/nEventsVzBin_7";
-    hEvents = (TH1F *)fRead->Get(_baseEventHisto);
-    double nEvents_ = hEvents->GetEntries();
-    double nEvents1_ = hEvents->Integral();
-    
-    hdNdEta_default->Scale(1.0/nEvents_/binWidth);
-    
-    return hdNdEta_default;
-    
+   // delete fRead;
 }
 
 void
@@ -115,7 +84,7 @@ TriHadronLocalAnalyzer::gStyle()
 void
 TriHadronLocalAnalyzer::Canvas()
 {
-    TCanvas *c1 = new TCanvas("c1","",500,500);
+    TCanvas *c1 = new TCanvas("c1","C1",500,500);
     gStyle();
     c1->SetFillColor(0);
     c1->SetBorderMode(0);
@@ -140,7 +109,7 @@ TriHadronLocalAnalyzer::Canvas1()
   //  TCanvas *clone1 = (TCanvas*)c1->Clone("clone1");
   //  clone1->cd();
     
-    TCanvas *c2 = new TCanvas("c2","",500,500);
+    TCanvas *c2 = new TCanvas("c2","C2",500,500);
     gStyle();
     c2->SetFillColor(0);
     c2->SetBorderMode(0);
@@ -163,7 +132,7 @@ void
 TriHadronLocalAnalyzer::Canvas2()
 {
     
-    TCanvas *c3 = new TCanvas("c3","",500,500);
+    TCanvas *c3 = new TCanvas("c3","C3",500,500);
     gStyle();
     c3->SetFillColor(0);
     c3->SetBorderMode(0);
@@ -186,7 +155,7 @@ void
 TriHadronLocalAnalyzer::Canvas3()
 {
     
-    TCanvas *c4 = new TCanvas("c4","",500,500);
+    TCanvas *c4 = new TCanvas("c4","C4",500,500);
     gStyle();
     c4->SetFillColor(0);
     c4->SetBorderMode(0);
@@ -209,8 +178,8 @@ void
 TriHadronLocalAnalyzer::Canvas4()
 {
     
-    TCanvas *c5 = new TCanvas("c5","",800,650);
-    c5->cd();
+    TCanvas *c5 = new TCanvas("c5","C5",800,650);
+    gStyle();
     c5->SetFillColor(0);
     c5->SetBorderMode(0);
     c5->SetBorderSize(2);
@@ -222,7 +191,29 @@ TriHadronLocalAnalyzer::Canvas4()
     c5->SetBottomMargin(0.1);
     c5->SetLeftMargin(0.17);
     c5->SetRightMargin(0.10);
+    c5->SetLogy();
     c5->cd();
+}
+
+void
+TriHadronLocalAnalyzer::Canvas5()
+{
+    
+    TCanvas *c6 = new TCanvas("c6","C6",800,650);
+    gStyle();
+    c6->SetFillColor(0);
+    c6->SetBorderMode(0);
+    c6->SetBorderSize(2);
+    c6->SetTickx(1);
+    c6->SetTicky(1);
+    c6->SetFrameFillStyle(0);
+    c6->SetFrameBorderMode(0);
+    c6->SetTopMargin(0.05);
+    c6->SetBottomMargin(0.1);
+    c6->SetLeftMargin(0.1);
+    c6->SetRightMargin(0.17);
+   // c6->SetLogy();
+    c6->cd();
 }
 
 

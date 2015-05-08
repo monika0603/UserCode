@@ -29,7 +29,7 @@ void AnalyzeThreeParticleCorrelations()
     TH1::SetDefaultSumw2();
     
     fRead = new TFile("TriHadronFirstAttempt_FullStat.root");
-    
+
     _Signal_sEtaRegion = "TriHadronAnalysisMult190/hSignal1";
     _Background_sEtaRegion = "TriHadronAnalysisMult190/hBackground1";
     _Events = "TriHadronAnalysisMult190/evtHPNtrk";
@@ -90,10 +90,95 @@ void AnalyzeThreeParticleCorrelations()
     TH1D *hDeltaPhiProj = (TH1D*) hDifference->ProjectionY("hDeltaPhiProj",0,96,"e");
     hDeltaPhiProj->Draw();
     
+    
     tt.Canvas4();
-    tt.Efficiency();
+    TH1F *hdNdEta = Default(fRead);
+    hdNdEta->Draw();
     
-    hdNdEta_default->Draw();
+    TH1F *hUnSymmetrized = (TH1F *)hdNdEta->Clone();
+    TH1F *hSymmetrized = Symmetrize(hUnSymmetrized);
+    hSymmetrized->SetLineColor(kRed);
+    hSymmetrized->Draw("same");
     
+    tt.Canvas5();
+    TH2F *hFactors = AlldNdEta(fRead, hSymmetrized);
+    hFactors->Draw("zcol");
     
 }
+
+TH1F *Default(TFile *fRead)
+{
+    TH1::SetDefaultSumw2();
+    
+    const float binWidth = 0.06;
+    
+    TString _baseHistoName = "TriHadronAnalysisMult190/hdNdEta_VzBin_7";
+    TH1F *hdNdEta_default  = (TH1F*)fRead->Get(_baseHistoName);
+    
+    TString _baseEventHisto = "TriHadronAnalysisMult190/nEventsVzBin_7";
+    TH1F *hEvents = (TH1F *)fRead->Get(_baseEventHisto);
+    double nEvents_ = hEvents->GetEntries();
+    
+    hdNdEta_default->Scale(1.0/nEvents_/binWidth);
+    
+    return hdNdEta_default;
+    
+}
+
+TH1F *Symmetrize(TH1F *h)
+{
+    int nBins_ = h->GetNbinsX();
+    TH1F * htemp = (TH1F *)h->Clone();
+    for(int iBin_=1; iBin_<=nBins_/2; iBin_++)
+    {
+        double symmetric = (h->GetBinContent(iBin_)+h->GetBinContent(nBins_- iBin_+1))/2.0;
+        htemp->SetBinContent(iBin_,symmetric);
+        htemp->SetBinContent(nBins_ - iBin_ + 1,symmetric);
+    }
+    
+    return htemp;
+}
+
+TH2F *AlldNdEta(TFile *fRead, TH1F *hSymmetrized)
+{
+    const float binWidth = 0.06;
+    const int nBins = 1;
+    const int nEtaBins = 51;
+    const double vZMin = -15.0;
+    const double vZMax = 15.0;
+    const int nVz = 15;
+    
+    TH2F *hVzEtaEff = new TH2F("hVzEtaEff_cent","hVzEtaEff;eta;vz", nEtaBins, -3.0, 3.0, nVz, vZMin, vZMax);
+    TH1F *hdNdEtaVzBin[15];
+    
+    for(int iBin_=0; iBin_<=nBins; iBin_++)
+    {
+        char nEventsVzBin[400];
+        sprintf(nEventsVzBin,"TriHadronAnalysisMult190/nEventsVzBin_%d",iBin_);
+        TH1F * hEventsVzBin = (TH1F *)fRead->Get(nEventsVzBin);
+        double nEvents = hEventsVzBin->GetEntries();
+        
+        char ndNdEtaVzBin[400];
+        sprintf(ndNdEtaVzBin,"TriHadronAnalysisMult190/hdNdEta_VzBin_%d",iBin_);
+        hdNdEtaVzBin[iBin_] = (TH1F*)fRead->Get(ndNdEtaVzBin);
+        if(iBin_!=7)		hdNdEtaVzBin[iBin_]->Scale(1.0/nEvents/binWidth);
+        
+        for(int iEta_=0; iEta_<=nEtaBins; iEta_++)
+        {
+         
+            double numerator = hdNdEtaVzBin[iBin_]->GetBinContent(iEta_+1);
+            double denominator = hSymmetrized->GetBinContent(iEta_+1);
+            if(denominator > 0) double ratio = numerator/denominator;
+            
+            cout<<iEta_<<'\t'<<hSymmetrized->GetBinContent(iEta_+1)<<'\t'<<hdNdEtaVzBin[iBin_]->GetBinContent(iEta_+1)<<'\t'<<ratio<<endl;
+            if(hSymmetrized->GetBinContent(iEta_+1) > 0.0) hVzEtaEff->SetBinContent(iEta_+1,iBin_+1,ratio);
+        }
+
+        
+    }
+    
+    return hVzEtaEff;
+}
+
+
+
