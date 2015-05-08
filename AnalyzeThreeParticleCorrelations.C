@@ -142,7 +142,7 @@ TH1F *Symmetrize(TH1F *h)
 TH2F *AlldNdEta(TFile *fRead, TH1F *hSymmetrized)
 {
     const float binWidth = 0.06;
-    const int nBins = 1;
+    const int nBins = 14;
     const int nEtaBins = 51;
     const double vZMin = -15.0;
     const double vZMax = 15.0;
@@ -150,6 +150,14 @@ TH2F *AlldNdEta(TFile *fRead, TH1F *hSymmetrized)
     
     TH2F *hVzEtaEff = new TH2F("hVzEtaEff_cent","hVzEtaEff;eta;vz", nEtaBins, -3.0, 3.0, nVz, vZMin, vZMax);
     TH1F *hdNdEtaVzBin[15];
+    
+    for(int iBin_=0; iBin_<=nBins; iBin_++)
+    {
+        for(int iEta_=0; iEta_<=nEtaBins; iEta_++)
+        {
+            hVzEtaEff->SetBinContent(iEta_+1,iBin_+1, 0.0);
+        }
+    }
     
     for(int iBin_=0; iBin_<=nBins; iBin_++)
     {
@@ -171,7 +179,7 @@ TH2F *AlldNdEta(TFile *fRead, TH1F *hSymmetrized)
             if(denominator > 0) double ratio = numerator/denominator;
             
             cout<<iEta_<<'\t'<<hSymmetrized->GetBinContent(iEta_+1)<<'\t'<<hdNdEtaVzBin[iBin_]->GetBinContent(iEta_+1)<<'\t'<<ratio<<endl;
-            if(hSymmetrized->GetBinContent(iEta_+1) > 0.0) hVzEtaEff->SetBinContent(iEta_+1,iBin_+1,ratio);
+            if(hSymmetrized->GetBinContent(iEta_+1) > 0.0 && ratio < 2.0) hVzEtaEff->SetBinContent(iEta_+1,iBin_+1,ratio);
         }
 
         
