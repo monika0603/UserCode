@@ -23,6 +23,10 @@ void CorrectionFactorsMacro()
     TH2F *hFactors = AlldNdEta(fRead, hSymmetrized);
     hFactors->Draw("zcol");
     
+    TFile *fNew = new TFile("CorrectionFactors_PbPb.root", "RECREATE");
+    hFactors->Write();
+    fNew->Close();
+    
 }
 
 

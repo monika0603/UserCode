@@ -76,8 +76,6 @@ TH1F *odNdEta(TFile *fRead)
     TH1F *hEvents = (TH1F *)fRead->Get(_baseEventHisto);
     double nEvents_ = hEvents->GetEntries();
     
-  //  hdNdEta_0->Scale(1.0/nEvents_/binWidth);
-    
     return hdNdEta_0;
     
 }
@@ -206,9 +204,6 @@ CorrectionFactors_MinBias_PbPb::Canvas()
 void
 CorrectionFactors_MinBias_PbPb::Canvas1()
 {
-  //  TCanvas *clone1 = (TCanvas*)c1->Clone("clone1");
-  //  clone1->cd();
-    
     TCanvas *c2 = new TCanvas("c2","C2",500,500);
     gStyle();
     c2->SetFillColor(0);
