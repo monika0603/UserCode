@@ -21,19 +21,6 @@ class ThreeParticleAnalyzer
     
   private:
     TFile *fRead;
-    TString _Signal_sEtaRegion;
-    TString _Background_sEtaRegion;
-    TString _Events;
-    
-    double pi_ = 3.1415927;
-    
-    TH2D *hSignal_sEtaRegion;
-    TH2D *hBackground_sEtaRegion;
-    TH1F *hEvents;
-    
-    double  _phibinwidth;
-    int _x0, _y0, _B0;
-    double _nEvents;
 };
 
 ThreeParticleAnalyzer::ThreeParticleAnalyzer( std::string fileName )
@@ -56,69 +43,82 @@ ThreeParticleAnalyzer::~ThreeParticleAnalyzer()
 
 TH2D *SameEtaRegion(TFile *fRead, const int cent)
 {
+    TString _Signal_sEtaRegion;
+    TString _Background_sEtaRegion;
+    TString _Events;
+    
+    double pi_ = 3.1415927;
+    
+    TH2D *hSignal_sEtaRegion;
+    TH2D *hBackground_sEtaRegion;
+    TH1F *hEvents;
+    
+    double  _phibinwidth;
+    int _x0, _y0, _B0;
+    double _nEvents;
+
     TH1::SetDefaultSumw2();
     cout<<"cent = "<<cent<<endl;
     
     switch(cent)
     {
-        case '0':
+        case 0:
         {
             _Signal_sEtaRegion = "TriHadronAnalysisMult0_10/hSignal1";
             _Background_sEtaRegion = "TriHadronAnalysisMult0_10/hBackground1";
             _Events = "TriHadronAnalysisMult0_10/evtHPNtrk";
-            cout<<"Why don't I get here?"<<endl;
             break;
         }
-        case '1':
+        case 1:
         {
             _Signal_sEtaRegion = "TriHadronAnalysisMult10_20/hSignal1";
             _Background_sEtaRegion = "TriHadronAnalysisMult10_20/hBackground1";
             _Events = "TriHadronAnalysisMult10_20/evtHPNtrk";
             break;
         }
-        case '2':
+        case 2:
         {
             _Signal_sEtaRegion = "TriHadronAnalysisMult20_30/hSignal1";
             _Background_sEtaRegion = "TriHadronAnalysisMult20_30/hBackground1";
             _Events = "TriHadronAnalysisMult20_30/evtHPNtrk";
             break;
         }
-        case '3':
+        case 3:
         {
             _Signal_sEtaRegion = "TriHadronAnalysisMult20_30/hSignal1";
             _Background_sEtaRegion = "TriHadronAnalysisMult20_30/hBackground1";
             _Events = "TriHadronAnalysisMult20_30/evtHPNtrk";
             break;
         }
-        case '4':
+        case 4:
         {
             _Signal_sEtaRegion = "TriHadronAnalysisMult30_40/hSignal1";
             _Background_sEtaRegion = "TriHadronAnalysisMult30_40/hBackground1";
             _Events = "TriHadronAnalysisMult30_40/evtHPNtrk";
             break;
         }
-        case '5':
+        case 5:
         {
             _Signal_sEtaRegion = "TriHadronAnalysisMult40_50/hSignal1";
             _Background_sEtaRegion = "TriHadronAnalysisMult40_50/hBackground1";
             _Events = "TriHadronAnalysisMult40_50/evtHPNtrk";
             break;
         }
-        case '6':
+        case 6:
         {
             _Signal_sEtaRegion = "TriHadronAnalysisMult50_60/hSignal1";
             _Background_sEtaRegion = "TriHadronAnalysisMult50_60/hBackground1";
             _Events = "TriHadronAnalysisMult50_60/evtHPNtrk";
             break;
         }
-        case '7':
+        case 7:
         {
             _Signal_sEtaRegion = "TriHadronAnalysisMult60_70/hSignal1";
             _Background_sEtaRegion = "TriHadronAnalysisMult60_70/hBackground1";
             _Events = "TriHadronAnalysisMult60_70/evtHPNtrk";
             break;
         }
-        case '8':
+        case 8:
         {
             _Signal_sEtaRegion = "TriHadronAnalysisMult70_80/hSignal1";
             _Background_sEtaRegion = "TriHadronAnalysisMult70_80/hBackground1";
@@ -209,7 +209,6 @@ ThreeParticleAnalyzer::Canvas()
     c1->SetRightMargin(0.15);
     c1->SetTheta(50.61189);
     c1->SetPhi(40.90062);
-    c1->SetLogy();
     c1->cd();
     
 }
