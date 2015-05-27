@@ -5,9 +5,9 @@ void ThreeParticleMacro_unlocked()
     
     ThreeParticleAnalyzer *cf = new ThreeParticleAnalyzer();
     
-    cf->Canvas();
+    TCanvas *c1 = cf->Canvas();
     TFile *fRead = new TFile("TriHadronCorr_BkgTerm.root");
-    TH2D *hSig_sameEtaRegion = SameEtaRegion(fRead, 0);
+    TH2D *hSig_sameEtaRegion = SameEtaRegion(fRead, 1);
     hSig_sameEtaRegion->SetTitle("");
     hSig_sameEtaRegion->GetYaxis()->SetTitle("#Delta#phi");
     hSig_sameEtaRegion->GetXaxis()->SetTitle("#Delta#phi");
@@ -18,10 +18,10 @@ void ThreeParticleMacro_unlocked()
     hSig_sameEtaRegion->GetYaxis()->SetTitleSize(0.06);
     hSig_sameEtaRegion->GetYaxis()->SetTitleOffset(0.67);
     hSig_sameEtaRegion->Draw("zcol");
- //   c1->SaveAs("HistSameEtaRegion.pdf");
+    c1->SaveAs("HistSameEtaRegion.pdf");
     
-    cf->Canvas1();
-    TH2D *hSig_crossEtaRegion = CrossEtaRegion(fRead, 0);
+    TCanvas *c2 = cf->Canvas1();
+    TH2D *hSig_crossEtaRegion = CrossEtaRegion(fRead, 1);
     hSig_crossEtaRegion->GetYaxis()->SetTitle("#Delta#phi");
     hSig_crossEtaRegion->GetXaxis()->SetTitle("#Delta#phi");
     hSig_crossEtaRegion->GetXaxis()->SetLabelFont(42);
@@ -32,10 +32,11 @@ void ThreeParticleMacro_unlocked()
     hSig_crossEtaRegion->GetYaxis()->SetTitleOffset(0.67);
     hSig_crossEtaRegion->SetTitle("");
     hSig_crossEtaRegion->Draw("zcol");
- //   c2->SaveAs("HistCrossEtaRegion.pdf");
+    c2->SaveAs("HistCrossEtaRegion.pdf");
     
-    cf->Canvas2();
-    TH2D *hDifference = (TH2D*)hSig_crossEtaRegion->Clone("hist1 - hist2");
+    TCanvas *c3 = cf->Canvas2();
+    const double pi_ = 3.1415927;
+    TH2D *hDifference = new TH2D("hDifference", "#Delta#phi;#Delta#phi", 96,-pi_/2+pi_/32,3*pi_/2-pi_/32,96,-pi_/2+pi_/32,3*pi_/2-pi_/32);
     
     for(int iBin = 1; iBin <=hSig_sameEtaRegion->GetNbinsX(); iBin++)
     {
@@ -45,16 +46,24 @@ void ThreeParticleMacro_unlocked()
             double sameEta = hSig_sameEtaRegion->GetBinContent(iBin, jBin);
             double crossEta = hSig_crossEtaRegion->GetBinContent(iBin, jBin);
             double _difference = sameEta - crossEta;
+            cout<<sameEta<<'\t'<<crossEta<<'\t'<<_difference<<endl;
             hDifference->SetBinContent(iBin, jBin, _difference);
         }
     }
-    
+    hDifference->GetYaxis()->SetTitle("#Delta#phi");
+    hDifference->GetXaxis()->SetTitle("#Delta#phi");
+    hDifference->GetXaxis()->SetLabelFont(42);
+    hDifference->GetXaxis()->SetTitleSize(0.06);
+    hDifference->GetXaxis()->SetTitleOffset(0.67);
+    hDifference->GetYaxis()->SetLabelFont(42);
+    hDifference->GetYaxis()->SetTitleSize(0.06);
+    hDifference->GetYaxis()->SetTitleOffset(0.67);
     hDifference->SetTitle("");
     hDifference->Draw("zcol");
- //   c3->SaveAs("SameMinusCrossEtaRegion.pdf");
+    c3->SaveAs("SameMinusCrossEtaRegion.pdf");
     
-    cf->Canvas3();
-    TH2D *hSig_combBkgTerm = CombinatorialBkgTerm(fRead, 0);
+    TCanvas *c4 = cf->Canvas3();
+    TH2D *hSig_combBkgTerm = CombinatorialBkgTerm(fRead, 1);
     hSig_combBkgTerm->GetYaxis()->SetTitle("#Delta#phi");
     hSig_combBkgTerm->GetXaxis()->SetTitle("#Delta#phi");
     hSig_combBkgTerm->GetXaxis()->SetLabelFont(42);
@@ -65,11 +74,11 @@ void ThreeParticleMacro_unlocked()
     hSig_combBkgTerm->GetYaxis()->SetTitleOffset(0.67);
     hSig_combBkgTerm->Draw("zcol");
     hSig_combBkgTerm->SetTitle("");
- //   c4->SaveAs("SameEtaRegion_combBkgTerm.pdf");
+    c4->SaveAs("SameEtaRegion_combBkgTerm.pdf");
     
     
-    cf->Canvas4();
-    TH2D *hSig_combBkgTerm_cEtaRegion = CombBkgTerm_crossEtaRegion(fRead, 0);
+    TCanvas *c5 = cf->Canvas4();
+    TH2D *hSig_combBkgTerm_cEtaRegion = CombBkgTerm_crossEtaRegion(fRead, 1);
     hSig_combBkgTerm_cEtaRegion->GetYaxis()->SetTitle("#Delta#phi");
     hSig_combBkgTerm_cEtaRegion->GetXaxis()->SetTitle("#Delta#phi");
     hSig_combBkgTerm_cEtaRegion->GetXaxis()->SetLabelFont(42);
@@ -80,10 +89,10 @@ void ThreeParticleMacro_unlocked()
     hSig_combBkgTerm_cEtaRegion->GetYaxis()->SetTitleOffset(0.67);
     hSig_combBkgTerm_cEtaRegion->Draw("zcol");
     hSig_combBkgTerm_cEtaRegion->SetTitle("");
- //   c5->SaveAs("CrossEtaRegion_combBkgTerm.pdf");
+    c5->SaveAs("CrossEtaRegion_combBkgTerm.pdf");
     
-    cf->Canvas5();
-    TH2D *hDiffBkgTerm = (TH2D*)hSig_combBkgTerm_cEtaRegion->Clone("bkg1 - bkg2");
+    TCanvas *c6 = cf->Canvas5();
+    TH2D *hDiffBkgTerm = new TH2D("hDiffBkgTerm", "#Delta#phi;#Delta#phi", 96,-pi_/2+pi_/32,3*pi_/2-pi_/32,96,-pi_/2+pi_/32,3*pi_/2-pi_/32);
      
     for(int iBin = 1; iBin <=hSig_combBkgTerm->GetNbinsX(); iBin++)
     {
@@ -107,12 +116,12 @@ void ThreeParticleMacro_unlocked()
     hDiffBkgTerm->GetYaxis()->SetTitleOffset(0.67);
     hDiffBkgTerm->Draw("zcol");
     hDiffBkgTerm->SetTitle("");
- //   c6->SaveAs("SameMinusCrossEtaRegion_combBkgTerm.pdf");
+    c6->SaveAs("SameMinusCrossEtaRegion_combBkgTerm.pdf");
 
 
     ////////////////////////////////////////////////////////////////////////
-    cf->Canvas6();
-    TH2D *hFinalSignal = (TH2D*)hDifference->Clone("hist - bkg");
+    TCanvas *c7 = cf->Canvas6();
+    TH2D *hFinalSignal = new TH2D("hFinalSignal", "#Delta#phi;#Delta#phi", 96,-pi_/2+pi_/32,3*pi_/2-pi_/32,96,-pi_/2+pi_/32,3*pi_/2-pi_/32);
     
     for(int iBin = 1; iBin <=hDifference->GetNbinsX(); iBin++)
     {
@@ -136,7 +145,7 @@ void ThreeParticleMacro_unlocked()
     hFinalSignal->GetYaxis()->SetTitleOffset(0.67);
     hFinalSignal->Draw("zcol");
     hFinalSignal->SetTitle("");
-  //  c7->SaveAs("SignalMinusCombBkgTerm.pdf");
+    c7->SaveAs("SignalMinusCombBkgTerm.pdf");
     
    /* TFile *fNew = new TFile("TriHadronAnalyzerOutput_PbPb.root", "RECREATE");
     hFactors->Write();
