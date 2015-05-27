@@ -6,6 +6,7 @@
 #include <TString.h>
 #include <TCanvas.h>
 #include <TStyle.h>
+
 using namespace std;
 
 class CorrectionFactors_MinBias_PbPb
@@ -17,9 +18,9 @@ class CorrectionFactors_MinBias_PbPb
     TH1F *odNdEta(TFile *fRead);
     TH1F *Symmetrize(TH1F *h);
     TH2F *AlldNdEta(TFile *fRead, TH1F *hSymmetrized);
-    void gStyle();
-    void Canvas();
-    void Canvas1();
+    void WindowDressing();
+    TCanvas *Canvas();
+    TCanvas *Canvas1();
     virtual ~CorrectionFactors_MinBias_PbPb();
     
   private:
@@ -34,7 +35,7 @@ CorrectionFactors_MinBias_PbPb::CorrectionFactors_MinBias_PbPb( std::string file
 CorrectionFactors_MinBias_PbPb::CorrectionFactors_MinBias_PbPb()
 {
     fRead = new TFile("TriHadronFirstAttempt_FullStat_Centralities.root");
-    fRead.ls();
+    fRead->ls();
     
     if(fRead) cout<<"Successfully opned the input file."<<endl;
 }
@@ -102,6 +103,7 @@ TH2F *AlldNdEta(TFile *fRead, TH1F *hSymmetrized)
     const double vZMin = -15.0;
     const double vZMax = 15.0;
     const int nVz = 15;
+    double ratio = 999;
     
     TH2F *hVzEtaEff = new TH2F("hVzEtaEff_cent","hVzEtaEff;eta;vz", nEtaBins, -3.0, 3.0, nVz, vZMin, vZMax);
     TH1F *hdNdEtaVzBin[15];
@@ -131,7 +133,7 @@ TH2F *AlldNdEta(TFile *fRead, TH1F *hSymmetrized)
             
             double numerator = hdNdEtaVzBin[iBin_]->GetBinContent(iEta_+1);
             double denominator = hSymmetrized->GetBinContent(iEta_+1);
-            if(denominator > 0) double ratio = numerator/denominator;
+            if(denominator > 0) ratio = numerator/denominator;
             
          //   cout<<iEta_<<'\t'<<hSymmetrized->GetBinContent(iEta_+1)<<'\t'<<hdNdEtaVzBin[iBin_]->GetBinContent(iEta_+1)<<'\t'<<ratio<<endl;
             if(hSymmetrized->GetBinContent(iEta_+1) > 0.0 && ratio < 2.0) hVzEtaEff->SetBinContent(iEta_+1,iBin_+1,ratio);
@@ -145,7 +147,7 @@ TH2F *AlldNdEta(TFile *fRead, TH1F *hSymmetrized)
 
 
 void
-CorrectionFactors_MinBias_PbPb::gStyle()
+CorrectionFactors_MinBias_PbPb::WindowDressing()
 {
     
     gStyle->SetOptStat(0);
@@ -178,11 +180,11 @@ CorrectionFactors_MinBias_PbPb::gStyle()
     
 }
 
-void
-CorrectionFactors_MinBias_PbPb::Canvas()
+TCanvas
+*CorrectionFactors_MinBias_PbPb::Canvas()
 {
     TCanvas *c1 = new TCanvas("c1","C1",700,500);
-    gStyle();
+    WindowDressing();
     c1->SetFillColor(0);
     c1->SetBorderMode(0);
     c1->SetBorderSize(2);
@@ -198,14 +200,15 @@ CorrectionFactors_MinBias_PbPb::Canvas()
     c1->SetPhi(40.90062);
     c1->SetLogy();
     c1->cd();
+    return c1;
     
 }
 
-void
-CorrectionFactors_MinBias_PbPb::Canvas1()
+TCanvas
+*CorrectionFactors_MinBias_PbPb::Canvas1()
 {
     TCanvas *c2 = new TCanvas("c2","C2",500,500);
-    gStyle();
+    WindowDressing();
     c2->SetFillColor(0);
     c2->SetBorderMode(0);
     c2->SetBorderSize(2);
@@ -220,6 +223,7 @@ CorrectionFactors_MinBias_PbPb::Canvas1()
     c2->SetTheta(50.61189);
     c2->SetPhi(40.90062);
     c2->cd();
+    return c2;
 
 }
 
