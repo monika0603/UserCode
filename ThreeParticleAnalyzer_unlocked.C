@@ -63,7 +63,7 @@ TH2D *SameEtaRegion(TFile *fRead, const int cent)
     int _x0, _y0, _B0;
     double _nEvents;
     
-   // TString _centrality[9] = {"0_10", "10_20", "20_30", "30_40", "40_50", "50_60", "60_70", "70_80"};
+    TString _centrality[9] = {"0_10", "10_20", "20_30", "30_40", "40_50", "50_60", "60_70", "70_80"};
 
     TH1::SetDefaultSumw2();
    // cout<<"cent = "<<cent<<'\t'<<_centrality[cent]<<endl;
