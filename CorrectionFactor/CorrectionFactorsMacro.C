@@ -5,7 +5,7 @@ void CorrectionFactorsMacro()
     
     CorrectionFactors_MinBias_PbPb *cf = new CorrectionFactors_MinBias_PbPb();
     
-    cf->Canvas();
+    TCanvas *c1 = cf->Canvas();
     TFile *fRead = new TFile("TriHadronFirstAttempt_FullStat_Centralities.root");
     TH1F *hdNdEta = Default(fRead);
     hdNdEta->Draw();
@@ -19,7 +19,7 @@ void CorrectionFactorsMacro()
     hdNdEta_0->SetLineColor(kGreen+4);
     hdNdEta_0->Draw("same");
     
-    cf->Canvas1();
+    TCanvas *c2 = cf->Canvas1();
     TH2F *hFactors = AlldNdEta(fRead, hSymmetrized);
     hFactors->Draw("zcol");
     
