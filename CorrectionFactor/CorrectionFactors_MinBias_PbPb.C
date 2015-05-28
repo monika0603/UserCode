@@ -49,32 +49,40 @@ TH1F *Default(TFile *fRead)
     
     TH1F *hdNdEta_default[8];
     TH1F *hEvents[8];
-    const float binWidth = 0.06;
-    char *cent0 = "0_10"; char *cent1 = "10_20"; char *cent2 = "20_30"; char *cent3 = "30_40";
-    char *cent4 = "40_50"; char *cent5 = "50_60"; char *cent6 = "60_70"; char *cent7 = "70_80";
-    
-    char *array[8];
-    
-    array[0] = cent0; array[1] = cent1; array[2] = cent2; array[3] = cent3; array[4] = cent4;
-    array[5] = cent5; array[6] = cent6; array[7] = cent7;
     
     double nEvents_[8]={-99,-99,-99,-99,-99,-99,-99,-99};
     const int centBin = 8;
+    const float binWidth = 0.06;
+    
+    char *_baseHistoName[8];
+    strcpy(_baseHistoName[0], "TriHadronAnalysisMult0_10/hdNdEta_VzBin_7");
+    strcpy(_baseHistoName[1], "TriHadronAnalysisMult10_20/hdNdEta_VzBin_7");
+    strcpy(_baseHistoName[2], "TriHadronAnalysisMult20_30/hdNdEta_VzBin_7");
+    strcpy(_baseHistoName[3], "TriHadronAnalysisMult30_40/hdNdEta_VzBin_7");
+    strcpy(_baseHistoName[4], "TriHadronAnalysisMult40_50/hdNdEta_VzBin_7");
+    strcpy(_baseHistoName[5], "TriHadronAnalysisMult50_60/hdNdEta_VzBin_7");
+    strcpy(_baseHistoName[6], "TriHadronAnalysisMult60_70/hdNdEta_VzBin_7");
+    strcpy(_baseHistoName[7], "TriHadronAnalysisMult70_80/hdNdEta_VzBin_7");
+    
+    char *_baseEventHisto[8];
+    strcpy(_baseEventHisto[0], "TriHadronAnalysisMult0_10/nEventsVzBin_7");
+    strcpy(_baseEventHisto[1], "TriHadronAnalysisMult10_20/nEventsVzBin_7");
+    strcpy(_baseEventHisto[2], "TriHadronAnalysisMult20_30/nEventsVzBin_7");
+    strcpy(_baseEventHisto[3], "TriHadronAnalysisMult30_40/nEventsVzBin_7");
+    strcpy(_baseEventHisto[4], "TriHadronAnalysisMult40_50/nEventsVzBin_7");
+    strcpy(_baseEventHisto[5], "TriHadronAnalysisMult50_60/nEventsVzBin_7");
+    strcpy(_baseEventHisto[6], "TriHadronAnalysisMult60_70/nEventsVzBin_7");
+    strcpy(_baseEventHisto[7], "TriHadronAnalysisMult70_80/nEventsVzBin_7");
     
     for(int iCent_=0; iCent_<centBin; iCent_++)
     {
-        char _baseHistoName[400];
-        sprintf(_baseHistoName,"TriHadronAnalysisMult%d/hdNdEta_VzBin_7",array[iCent_]);
-        cout<<_baseHistoName<<endl;
+        cout<<_baseHistoName[iCent_]<<endl;
+        hdNdEta_default[iCent_]  = (TH1F*)fRead->Get(_baseHistoName[iCent_]);
 
-        hdNdEta_default[iCent_]  = (TH1F*)fRead->Get(_baseHistoName);
-    
-        char _baseEventHisto[400];
-        sprintf(_baseEventHisto,"TriHadronAnalysisMult%d/hdNdEta_VzBin_7",array[iCent_]);
-        cout<<_baseEventHisto<<endl;
-
-        hEvents[iCent_] = (TH1F *)fRead->Get(_baseEventHisto);
+        cout<<_baseEventHisto[iCent_]<<endl;
+        hEvents[iCent_] = (TH1F *)fRead->Get(_baseEventHisto[iCent_]);
         nEvents_[iCent_] = hEvents[iCent_]->GetEntries();
+        cout<<nEvents_[iCent_]<<endl;
     
         hdNdEta_default[iCent_]->Scale(1.0/nEvents_[iCent_]/binWidth);
         return hdNdEta_default[iCent_];
@@ -107,20 +115,32 @@ void AlldNdEta(TFile *fRead, TH1F *hSymmetrized)
     double ratio[8] = {99,99,99,99,99,99,99,99};
     const int centBin = 8;
     
-    char *cent0 = "0_10"; char *cent1 = "10_20"; char *cent2 = "20_30"; char *cent3 = "30_40";
-    char *cent4 = "40_50"; char *cent5 = "50_60"; char *cent6 = "60_70"; char *cent7 = "70_80";
-    
-    char *array[8];
-    
-    array[0] = cent0; array[1] = cent1; array[2] = cent2; array[3] = cent3; array[4] = cent4;
-    array[5] = cent5; array[6] = cent6; array[7] = cent7;
-    
     TH2F *hVzEtaEff[8];
     TH1F *hdNdEtaVzBin[8][15];
     TH1F * hEventsVzBin[8];
     double nEvents[8];
     double numerator[8];
     double denominator[8];
+    
+    char *nEventsVzBin[8];
+    strcpy(nEventsVzBin[0], "TriHadronAnalysisMult0_10/nEventsVzBin_");
+    strcpy(nEventsVzBin[1], "TriHadronAnalysisMult10_20/nEventsVzBin_");
+    strcpy(nEventsVzBin[2], "TriHadronAnalysisMult20_30/nEventsVzBin_");
+    strcpy(nEventsVzBin[3], "TriHadronAnalysisMult30_40/nEventsVzBin_");
+    strcpy(nEventsVzBin[4], "TriHadronAnalysisMult40_50/nEventsVzBin_");
+    strcpy(nEventsVzBin[5], "TriHadronAnalysisMult50_60/nEventsVzBin_");
+    strcpy(nEventsVzBin[6], "TriHadronAnalysisMult60_70/nEventsVzBin_");
+    strcpy(nEventsVzBin[7], "TriHadronAnalysisMult70_80/nEventsVzBin_");
+    
+    char *ndNdEtaVzBin[8];
+    strcpy(ndNdEtaVzBin[0], "TriHadronAnalysisMult0_10/hdNdEta_VzBin_");
+    strcpy(ndNdEtaVzBin[1], "TriHadronAnalysisMult10_20/hdNdEta_VzBin_");
+    strcpy(ndNdEtaVzBin[2], "TriHadronAnalysisMult20_30/hdNdEta_VzBin_");
+    strcpy(ndNdEtaVzBin[3], "TriHadronAnalysisMult30_40/hdNdEta_VzBin_");
+    strcpy(ndNdEtaVzBin[4], "TriHadronAnalysisMult40_50/hdNdEta_VzBin_");
+    strcpy(ndNdEtaVzBin[5], "TriHadronAnalysisMult50_60/hdNdEta_VzBin_");
+    strcpy(ndNdEtaVzBin[6], "TriHadronAnalysisMult60_70/hdNdEta_VzBin_");
+    strcpy(ndNdEtaVzBin[7], "TriHadronAnalysisMult70_80/hdNdEta_VzBin_");
     
     for(int iCent_=0; iCent_<centBin; iCent_++)
     {
@@ -139,15 +159,16 @@ void AlldNdEta(TFile *fRead, TH1F *hSymmetrized)
     {
         for(int iBin_=0; iBin_<=nBins; iBin_++)
         {
-            char nEventsVzBin[400];
-            sprintf(nEventsVzBin,"TriHadronAnalysisMult%d/nEventsVzBin_%d",array,iBin_);
-            cout<<nEventsVzBin<<endl;
-            hEventsVzBin[iCent_] = (TH1F *)fRead->Get(nEventsVzBin);
+            stringstream ss;
+            ss<<nEventsVzBin[iCent_]<<iBin_;
+            cout<<"*********"<<ss.str()<<endl;
+            hEventsVzBin[iCent_] = (TH1F *)fRead->Get(nEventsVzBin[iCent_]);
             nEvents[iCent_] = hEventsVzBin[iCent_]->GetEntries();
         
-            char ndNdEtaVzBin[400];
-            sprintf(ndNdEtaVzBin,"TriHadronAnalysisMult%d/hdNdEta_VzBin_%d",array,iBin_);
-            hdNdEtaVzBin[iCent_][iBin_] = (TH1F*)fRead->Get(ndNdEtaVzBin);
+            stringstream dd;
+            dd<<ndNdEtaVzBin[iCent_]<<iBin_;
+            cout<<"*********"<<dd.str()<<endl;
+            hdNdEtaVzBin[iCent_][iBin_] = (TH1F*)fRead->Get(ndNdEtaVzBin[iCent_]);
             if(iBin_!=7)		hdNdEtaVzBin[iCent_][iBin_]->Scale(1.0/nEvents[iCent_]/binWidth);
         
             for(int iEta_=0; iEta_<=nEtaBins; iEta_++)
