@@ -14,7 +14,7 @@ class CorrectionFactors_MinBias_PbPb
   public:
     CorrectionFactors_MinBias_PbPb();
     CorrectionFactors_MinBias_PbPb(std::string fileName);
-    TH1F *Default(TFile *fRead);
+    TH1F *Default(TFile *fRead, int iCent_);
     TH1F *odNdEta(TFile *fRead);
     TH1F *Symmetrize(TH1F *h);
     void AlldNdEta(TFile *fRead, TH1F *hSymmetrized);
@@ -43,7 +43,7 @@ CorrectionFactors_MinBias_PbPb::~CorrectionFactors_MinBias_PbPb()
     delete fRead;
 }
 
-TH1F *Default(TFile *fRead)
+TH1F *Default(TFile *fRead, int iCent_)
 {
     TH1::SetDefaultSumw2();
     
@@ -74,8 +74,8 @@ TH1F *Default(TFile *fRead)
     strcpy(_baseEventHisto[6], "TriHadronAnalysisMult60_70/nEventsVzBin_7");
     strcpy(_baseEventHisto[7], "TriHadronAnalysisMult70_80/nEventsVzBin_7");
     
-    for(int iCent_=0; iCent_<centBin; iCent_++)
-    {
+ //   for(int iCent_=0; iCent_<centBin; iCent_++)
+ //   {
         cout<<_baseHistoName[iCent_]<<endl;
         hdNdEta_default[iCent_]  = (TH1F*)fRead->Get(_baseHistoName[iCent_]);
 
@@ -85,7 +85,7 @@ TH1F *Default(TFile *fRead)
         cout<<nEvents_[iCent_]<<endl;
     
         hdNdEta_default[iCent_]->Scale(1.0/nEvents_[iCent_]/binWidth);
-    }
+ //   }
     
     return hdNdEta_default;
     

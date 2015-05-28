@@ -18,7 +18,7 @@ void CorrectionFactorsMacro()
     
     for(int iCent_=0; iCent_<centBin; iCent_++)
     {
-        hdNdEta[iCent_] = Default(fRead);
+        hdNdEta[iCent_] = Default(fRead, iCent_);
     }
     
     TH1F *hUnSymmetrized[8];
