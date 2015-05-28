@@ -85,8 +85,9 @@ TH1F *Default(TFile *fRead)
         cout<<nEvents_[iCent_]<<endl;
     
         hdNdEta_default[iCent_]->Scale(1.0/nEvents_[iCent_]/binWidth);
-        return hdNdEta_default[iCent_];
     }
+    
+    return hdNdEta_default;
     
 }
 
