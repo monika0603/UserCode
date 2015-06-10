@@ -1,4 +1,4 @@
-#include "ThreeParticleAnalyzer_unlocked.C"
+#include "ThreeParticleAnalyzer_New.C"
 
 void ThreeParticleMacro_unlocked()
 {
@@ -6,8 +6,8 @@ void ThreeParticleMacro_unlocked()
     ThreeParticleAnalyzer *cf = new ThreeParticleAnalyzer();
     
     TCanvas *c1 = cf->Canvas();
-    TFile *fRead = new TFile("TriHadronCorr_BkgTerm.root");
-    TH2D *hSig_sameEtaRegion = SameEtaRegion(fRead, 1);
+    TFile *fRead = new TFile("TriHadronCorr_NoEffCorr_FullStat.root");
+    TH2D *hSig_sameEtaRegion = SameEtaRegion(fRead, 0);
     hSig_sameEtaRegion->SetTitle("");
     hSig_sameEtaRegion->GetYaxis()->SetTitle("#Delta#phi");
     hSig_sameEtaRegion->GetXaxis()->SetTitle("#Delta#phi");
@@ -21,7 +21,7 @@ void ThreeParticleMacro_unlocked()
     c1->SaveAs("HistSameEtaRegion.pdf");
     
     TCanvas *c2 = cf->Canvas1();
-    TH2D *hSig_crossEtaRegion = CrossEtaRegion(fRead, 1);
+    TH2D *hSig_crossEtaRegion = CrossEtaRegion(fRead, 0);
     hSig_crossEtaRegion->GetYaxis()->SetTitle("#Delta#phi");
     hSig_crossEtaRegion->GetXaxis()->SetTitle("#Delta#phi");
     hSig_crossEtaRegion->GetXaxis()->SetLabelFont(42);
@@ -46,7 +46,6 @@ void ThreeParticleMacro_unlocked()
             double sameEta = hSig_sameEtaRegion->GetBinContent(iBin, jBin);
             double crossEta = hSig_crossEtaRegion->GetBinContent(iBin, jBin);
             double _difference = sameEta - crossEta;
-            cout<<sameEta<<'\t'<<crossEta<<'\t'<<_difference<<endl;
             hDifference->SetBinContent(iBin, jBin, _difference);
         }
     }
@@ -63,7 +62,7 @@ void ThreeParticleMacro_unlocked()
     c3->SaveAs("SameMinusCrossEtaRegion.pdf");
     
     TCanvas *c4 = cf->Canvas3();
-    TH2D *hSig_combBkgTerm = CombinatorialBkgTerm(fRead, 1);
+    TH2D *hSig_combBkgTerm = CombinatorialBkgTerm(fRead, 0);
     hSig_combBkgTerm->GetYaxis()->SetTitle("#Delta#phi");
     hSig_combBkgTerm->GetXaxis()->SetTitle("#Delta#phi");
     hSig_combBkgTerm->GetXaxis()->SetLabelFont(42);
@@ -78,7 +77,7 @@ void ThreeParticleMacro_unlocked()
     
     
     TCanvas *c5 = cf->Canvas4();
-    TH2D *hSig_combBkgTerm_cEtaRegion = CombBkgTerm_crossEtaRegion(fRead, 1);
+    TH2D *hSig_combBkgTerm_cEtaRegion = CombBkgTerm_crossEtaRegion(fRead, 0);
     hSig_combBkgTerm_cEtaRegion->GetYaxis()->SetTitle("#Delta#phi");
     hSig_combBkgTerm_cEtaRegion->GetXaxis()->SetTitle("#Delta#phi");
     hSig_combBkgTerm_cEtaRegion->GetXaxis()->SetLabelFont(42);
