@@ -5,12 +5,14 @@ void ThreeParticleMacro_unlocked()
     
     ThreeParticleAnalyzer *cf = new ThreeParticleAnalyzer();
     
-    int Centrality = 0;
+    int Centrality = 2;
     
     TCanvas *c1 = cf->CanvasDressing(1);
-    TFile *fRead = new TFile("TriHadronCorrSigmaDeltaFullStat.root");
+    TFile *fRead = new TFile("TriHadronCorr_NormFactorIssueResol.root");
     TH2D *hSig_sameEtaRegion = SameEtaRegion(fRead, Centrality);
+    cout<<"What is the problem... (I)"<<endl;
     TH2D *hDSig_sameEtaRegion = histoDressing(hSig_sameEtaRegion);
+    cout<<"What is the problem... (II)"<<endl;
     hDSig_sameEtaRegion->Draw("zcol");
     c1->SaveAs("HistSameEtaRegion.pdf");
     
@@ -42,12 +44,12 @@ void ThreeParticleMacro_unlocked()
     hDiffBkgTerm->Draw("zcol");
     c6->SaveAs("SameMinusCrossEtaRegion_combBkgTerm.pdf");
 
-    ////////////////////////////////////////////////////////////////////////
     TCanvas *c7 = cf->CanvasDressing(7);
     TH2D *hFinalSignal = CalculateDifference(hDiffRealCorr, hDiffBkgTerm);
     hFinalSignal->Draw("zcol");
     c7->SaveAs("SignalMinusCombBkgTerm.pdf");
     
+    //////////////////////////////////////////////////////////
     TCanvas *c8 = cf->CanvasDressing(8);
     TH2D *hSig_SD_sEtaRegion = SD_sameEtaRegion(fRead, Centrality);
     TH2D *hDSig_SD_sEtaRegion = histoDressing(hSig_SD_sEtaRegion);
@@ -63,6 +65,26 @@ void ThreeParticleMacro_unlocked()
     TCanvas *c10 = cf->CanvasDressing(10);
     TH2D *hDiffSigmaDelta = CalculateDifference(hSig_SD_sEtaRegion, hSig_SD_cEtaRegion);
     hDiffSigmaDelta->Draw("zcol");
+    
+    TCanvas *c11 = cf->CanvasDressing(11);
+    TH2D *hSigCombBkg_SD_sEtaRegion = SD_combBkg_sameEtaRegion(fRead, Centrality);
+    TH2D *hDSigCombBkg_SD_sEtaRegion = histoDressing(hSigCombBkg_SD_sEtaRegion);
+    hDSigCombBkg_SD_sEtaRegion->Draw("zcol");
+    c8->SaveAs("SDcombBkgSameEtaRegion.pdf");
+    
+    TCanvas *c12 = cf->CanvasDressing(12);
+    TH2D *hSigCombBkg_SD_cEtaRegion = SD_combBkg_crossEtaRegion(fRead, Centrality);
+    TH2D *hDSigCombBkg_SD_cEtaRegion = histoDressing(hSigCombBkg_SD_cEtaRegion);
+    hDSigCombBkg_SD_cEtaRegion->Draw("zcol");
+    c8->SaveAs("SDcombBkgCrossEtaRegion.pdf");
+    
+    TCanvas *c13 = cf->CanvasDressing(13);
+    TH2D *hDiffSigmaDeltaBkg = CalculateDifference(hDSigCombBkg_SD_sEtaRegion, hDSigCombBkg_SD_cEtaRegion);
+    hDiffSigmaDeltaBkg->Draw("zcol");
+    
+    TCanvas *c14 = cf->CanvasDressing(14);
+    TH2D *hSignal = CalculateDifference(hDiffSigmaDelta, hDiffSigmaDeltaBkg);
+    hSignal->Draw("zcol");
 }
 
 
