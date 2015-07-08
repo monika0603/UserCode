@@ -6,6 +6,8 @@
 #include <TCanvas.h>
 #include <TStyle.h>
 #include <TStyle.h>
+#include <TF1.h>
+#include <TMathBase.h>
 using namespace std;
 
 class ThreeParticleAnalyzer
@@ -17,7 +19,7 @@ class ThreeParticleAnalyzer
     TH2D *SameEtaRegion(TFile *fRead, const int cent);
     TH2D *histoDressing(TH2D *histo);
     TH2D *CrossEtaRegion(TFile *fRead, const int cent);
-    TH2D *CalculateDifference(TH2D *histo1, TH2D *histo2);
+    TH2D *CalculateDifference(TH2D *histo1, TH2D *histo2, int num);
     TH2D *CombinatorialBkgTerm(TFile *fRead, const int cent);
     TH2D *CombBkgTerm_crossEtaRegion(TFile *fRead, const int cent);
     TH2D *SD_sameEtaRegion(TFile *fRead, const int cent);
@@ -25,6 +27,7 @@ class ThreeParticleAnalyzer
     TH2D *SD_combBkg_sameEtaRegion(TFile *fRead, const int cent);
     void WindowDressing();
     TCanvas *CanvasDressing(int i);
+   double GausFunct(double *x, double *par);
     virtual ~ThreeParticleAnalyzer();
     
   private:
@@ -51,6 +54,7 @@ ThreeParticleAnalyzer::~ThreeParticleAnalyzer()
 TH2D *DivideAndScale(TH2D *hSignal, TH2D *hBackground, TH1F *hEvents, TH1F *nMultTrig)
 {
     TH1::SetDefaultSumw2();
+    
     double _nEvents;
     double  _phibinwidth;
     double _nMultTrigger;
@@ -64,7 +68,7 @@ TH2D *DivideAndScale(TH2D *hSignal, TH2D *hBackground, TH1F *hEvents, TH1F *nMul
     _x0 = hBackground->GetXaxis()->FindBin(0.0);
     _y0 = hBackground->GetYaxis()->FindBin(0.0);
     _B0 = hBackground->GetBinContent(_x0,_y0);
-    hSignal->Scale(_B0/(_nMultTrigger));
+    hSignal->Scale(_B0/_nMultTrigger);
     hSignal->Scale(1.0/_phibinwidth/_phibinwidth);
     
     return hSignal;
@@ -92,6 +96,8 @@ TH2D *DivideAndScale(TH2D *hSignal, TH2D *hBackground, TH1F *hEvents)
 
 TH2D *SameEtaRegion(TFile *fRead, const int cent)
 {
+    TH1::SetDefaultSumw2();
+    
     TString _Signal_sEtaRegion;
     TString _Background_sEtaRegion;
     TString _Events;
@@ -140,6 +146,8 @@ TH2D *histoDressing(TH2D *histo)
 
 TH2D *CrossEtaRegion(TFile *fRead, const int cent)
 {
+    TH1::SetDefaultSumw2();
+    
     TString _Signal_cEtaRegion;
     TString _Background_cEtaRegion;
     TString _Events;
@@ -171,10 +179,11 @@ TH2D *CrossEtaRegion(TFile *fRead, const int cent)
     return hSig_crossEtaRegion;
 }
 
-TH2D *CalculateDifference(TH2D *histo1, TH2D *histo2)
+TH2D *CalculateDifference(TH2D *histo1, TH2D *histo2, int num)
 {
     const double pi_ = 3.1415927;
-    TH2D *hDifference = new TH2D("hDifference", "#Delta#phi;#Delta#phi", 96,-pi_/2+pi_/32,3*pi_/2-pi_/32,96,-pi_/2+pi_/32,3*pi_/2-pi_/32);
+    TH2D *hDifference = new TH2D(Form("hDiff%d",num), "#Delta#phi;#Delta#phi", 96,-pi_,pi_,96,-pi_,pi_);
+    TH1::SetDefaultSumw2();
     
     for(int iBin = 1; iBin <=histo1->GetNbinsX(); iBin++)
     {
@@ -182,9 +191,16 @@ TH2D *CalculateDifference(TH2D *histo1, TH2D *histo2)
         {
             int bin = hDifference->GetBin(iBin, jBin);
             double sameEta = histo1->GetBinContent(iBin, jBin);
+            double sameEtaError = histo1->GetBinError(iBin, jBin);
+            
             double crossEta = histo2->GetBinContent(iBin, jBin);
+            double crossEtaError = histo2->GetBinError(iBin, jBin);
+            
             double _difference = sameEta - crossEta;
+            double _diffError = sqrt((sameEtaError*sameEtaError) + (crossEtaError*crossEtaError));
+         //   cout<<sameEtaError<<'\t'<<crossEtaError<<'\t'<<_diffError<<endl;
             hDifference->SetBinContent(iBin, jBin, _difference);
+            hDifference->SetBinError(iBin, jBin, _diffError);
         }
     }
     TH2D *hDifference_D = histoDressing(hDifference);
@@ -193,6 +209,8 @@ TH2D *CalculateDifference(TH2D *histo1, TH2D *histo2)
 
 TH2D *CombinatorialBkgTerm(TFile *fRead, const int cent)
 {
+    TH1::SetDefaultSumw2();
+    
     TString _Signal_combBkg0;
     TString _Background_combBkg0;
     TString _Events;
@@ -200,7 +218,7 @@ TH2D *CombinatorialBkgTerm(TFile *fRead, const int cent)
     TH2D *hSignal_combBkg0;
     TH2D *hBackground_combBkg0;
     TH1F *hEvents;
-    TH1::SetDefaultSumw2();
+    
     
     TString _centrality[10] = {"0_2", "0_10", "10_20", "20_30", "30_40", "40_50", "50_60", "60_70", "70_80", "MinBias"};
     TString _signal = "/hSignal_combBkg0";
@@ -222,6 +240,8 @@ TH2D *CombinatorialBkgTerm(TFile *fRead, const int cent)
 
 TH2D *CombBkgTerm_crossEtaRegion(TFile *fRead, const int cent)
 {
+    TH1::SetDefaultSumw2();
+    
     TString _Signal_combBkg0;
     TString _Background_combBkg0;
     TString _Events;
@@ -236,7 +256,6 @@ TH2D *CombBkgTerm_crossEtaRegion(TFile *fRead, const int cent)
     TString _background = "/hBkg_combBkg_af0_as1";
     TString _dirName = "TriHadronAnalysisMult";
     TString _events = "/evtHPNtrk";
-  //  TString _events = "/events";
     
     _Signal_combBkg0 = _dirName + _centrality[cent] + _signal;
     _Background_combBkg0 = _dirName + _centrality[cent] + _background;
@@ -252,6 +271,8 @@ TH2D *CombBkgTerm_crossEtaRegion(TFile *fRead, const int cent)
 
 TH2D *SD_sameEtaRegion(TFile *fRead, const int cent)
 {
+    TH1::SetDefaultSumw2();
+    
     TString _Signal_SD_sEtaRegion;
     TString _Background_SD_sEtaRegion;
     TString _Events;
@@ -285,6 +306,8 @@ TH2D *SD_sameEtaRegion(TFile *fRead, const int cent)
 
 TH2D *SD_crossEtaRegion(TFile *fRead, const int cent)
 {
+    TH1::SetDefaultSumw2();
+    
     TString _Signal_SD_cEtaRegion;
     TString _Background_SD_cEtaRegion;
     TString _Events;
@@ -318,6 +341,8 @@ TH2D *SD_crossEtaRegion(TFile *fRead, const int cent)
 
 TH2D *SD_combBkg_sameEtaRegion(TFile *fRead, const int cent)
 {
+    TH1::SetDefaultSumw2();
+    
     TString _Signal_SD_combBkg_sEtaRegion;
     TString _Bkg_SD_combBkg_sEtaRegion;
     TString _Events;
@@ -348,6 +373,8 @@ TH2D *SD_combBkg_sameEtaRegion(TFile *fRead, const int cent)
 
 TH2D *SD_combBkg_crossEtaRegion(TFile *fRead, const int cent)
 {
+    TH1::SetDefaultSumw2();
+    
     TString _Signal_SD_combBkg_cEtaRegion;
     TString _Bkg_SD_combBkg_cEtaRegion;
     TString _Events;
@@ -431,3 +458,12 @@ TCanvas
     c->cd();
     return c;
 }
+
+double GausFunct(double *x, double *par)
+{
+    double arg = 0;
+    if(par[2] != 0) arg = (x[0] - par[1])/par[2];
+    double sig = par[0]*exp(-0.5*arg*arg);
+    return sig;
+}
+
